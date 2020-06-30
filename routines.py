@@ -380,3 +380,35 @@ class short_shot():
         if abs(angles[1]) < 0.05 and (eta < 0.45 or distance < 150):
             agent.pop()
             agent.push(flip(agent.me.local(car_to_ball)))
+            
+class wavedash():
+    def __init__(self):
+        #keeps track of game frames
+        self.step = 0
+    def run(self, agent):
+        # if velocity < 100
+        if agent.me.velocity.flatten().magnitude() > 100:
+            target = agent.me.velocity.flatten().normalize()*100 + Vector3(0,0,50)
+        else:
+            target = agent.me.orientation.forward.flatten()*100 + Vector3(0,0,50)
+
+        #cast to local coordinates
+        local_target = agent.me.local(target)
+        defaultPD(agent,local_target)
+
+        #increment frames
+        self.step += 1
+
+        #hold jump from frames 0-4 let go on 5-7
+        if self.step < 5:
+            agent.controller.jump = True
+        elif self.step < 8:
+            agent.controller.jump = False
+        else: #do the wave dash
+            if (agent.me.location + (agent.me.velocity * 0.2)).z < 5:
+                agent.controller.jump = True
+                agent.controller.pitch = -1
+                agent.controller.yaw = agent.controller.roll = 0
+                agent.pop()
+            elif not agent.me.airborne:
+                agent.pop()
