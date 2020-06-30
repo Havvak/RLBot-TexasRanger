@@ -63,7 +63,7 @@ class TexasRanger(GoslingAgent):
                 # if there are somehow no boosts then we go back to net
                 else:
                     back_post_rotation = True
-            # if all else fails rotate
+            # if all else fails rotate then short shot
             else:
                 if ball_in_right_field:
                     agent.push(goto(agent.friend_goal.left_post.flatten() + 50 * -agent.team, agent.ball.location))
@@ -74,6 +74,8 @@ class TexasRanger(GoslingAgent):
                 else:
                     agent.push(goto(agent.friend_goal.location.flatten() + 50 * -agent.team, agent.ball.location))
                     #print("Center Rotation")
+                agent.push(short_shot(agent.foe_goal.location))
+                print("Short Shot")
 
 
 
